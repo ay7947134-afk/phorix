@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Phorix Poster Maker</title>
+
+  <script src="https://unpkg.com/fabric@4.6.0/dist/fabric.min.js"></script>
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f2f2f2;
+      text-align: center;
+      padding: 10px;
+    }
+
+    h3 {
+      margin-bottom: 10px;
+    }
+
+    button, select, input {
+      margin: 5px;
+      padding: 8px 12px;
+      font-size: 14px;
+      border: none;
+      border-radius: 5px;
+    }
+
+    button {
+      background: #2575fc;
+      color: white;
+    }
+
+    canvas {
+      border: 2px solid #2575fc;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+
+<body>
+
+<h3>Phorix – Banner / Poster Maker</h3>
+
+<!-- CONTROLS -->
+<input type="file" accept="image/*" onchange="uploadImage()">
+<br>
+
+<button onclick="addText()">Add Text</button>
+<button onclick="deleteObj()">Delete</button>
+<button onclick="fontPlus()">A+</button>
+<button onclick="fontMinus()">A-</button>
+<button onclick="clearCanvas()">Clear</button>
+<br>
+
+<input type="color" onchange="changeBg(this.value)">
+<br>
+
+<select onchange="changeSize(this.value)">
+  <option value="300x400">Poster</option>
+  <option value="1080x1080">Instagram</option>
+  <option value="1280x720">YouTube</option>
+</select>
+
+<br>
+<button onclick="saveImage()">Download</button>
+
+<br><br>
+
+<canvas id="canvas" width="300" height="400"></canvas>
+
+<script>
+  var canvas = new fabric.Canvas('canvas');
+  canvas.selection = true;
+
+  function addText() {
+    var text = new fabric.Textbox("Tap to edit text", {
+      left: 50,
+      top: 50,
+      fontSize: 24,
+      fill: "black",
+      editable: true
+    });
+    canvas.add(text);
+    canvas.setActiveObject(text);
+  }
+
+  function uploadImage() {
+    var input = document.querySelector('input[type=file]');
+    var file = input.files[0];
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+      fabric.Image.fromURL(e.target.result, function (img) {
+        img.scaleToWidth(200);
+        canvas.add(img);
+        canvas.setActiveObject(img);
+      });
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function deleteObj() {
+    var obj = canvas.getActiveObject();
+    if (obj) canvas.remove(obj);
+  }
+
+  function fontPlus() {
+    var obj = canvas.getActiveObject();
+    if (obj && obj.type === "textbox") {
+      obj.fontSize += 2;
+      canvas.renderAll();
+    }
+  }
+
+  function fontMinus() {
+    var obj = canvas.getActiveObject();
+    if (obj && obj.type === "textbox") {
+      obj.fontSize -= 2;
+      canvas.renderAll();
+    }
+  }
+
+  function clearCanvas() {
+    canvas.clear();
+    canvas.setBackgroundColor('#ffffff', canvas.renderAll.bind(canvas));
+  }
+
+  function changeBg(color) {
+    canvas.setBackgroundColor(color, canvas.renderAll.bind(canvas));
+  }
+
+  function changeSize(size) {
+    var s = size.split("x");
+    canvas.setWidth(parseInt(s[0]));
+    canvas.setHeight(parseInt(s[1]));
+  }
+
+  function saveImage() {
+    var dataURL = canvas.toDataURL({
+      format: 'png',
+      quality: 1
+    });
+
+    var win = window.open("");
+    win.document.write("<img src='" + dataURL + "' style='width:100%'>");
+  }
+</script>
+
+</body>
+</html>
