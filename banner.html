@@ -1,1 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Phorix Design Tool</title>
 
+  <style>
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      font-family: "Segoe UI", sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .editor {
+      background: #ffffff;
+      width: 95%;
+      max-width: 1100px;
+      border-radius: 18px;
+      padding: 15px;
+      box-shadow: 0 20px 50px rgba(0,0,0,0.25);
+    }
+
+    h2 {
+      text-align: center;
+      margin: 5px 0 12px;
+      color: #333;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      background: #667eea;
+      color: #fff;
+      border: none;
+      padding: 8px 16px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background: #5563d6;
+    }
+
+    .canvas-area {
+      display: flex;
+      justify-content: center;
+      overflow: auto;
+    }
+
+    canvas {
+      background: #f5f6fa;
+      border-radius: 12px;
+      box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="editor">
+    <h2>Phorix Design Editor</h2>
+
+    <div class="toolbar">
+      <button onclick="setPoster()">Poster</button>
+      <button onclick="setThumbnail()">Thumbnail</button>
+      <button onclick="setCustom()">Custom</button><button onclick="uploadBackground()">Upload Background</button>
+<input type="file" id="bgInput" accept="image/*" style="display:none;">
+    </div>
+<input type="color" id="textColor" value="#000000" style="margin-left:5px;">
+<select id="fontSize" style="margin-left:5px;">
+  <option value="16">16px</option>
+  <option value="20" selected>20px</option>
+  <option value="24">24px</option>
+  <option value="30">30px</option>
+  <option value="36">36px</option>
+  <option value="48">48px</option>
+</select>
+    <div class="canvas-area">
+      <canvas id="canvas" width="600" height="400"></canvas>
+    </div>
+  </div>
+
+  <script>
+    let canvas, ctx;
+let bgImage = null;
+let bgInput = document.getElementById("bgInput");
+
+function uploadBackground() {
+  bgInput.click();
+}
+
+bgInput.addEventListener("change", e => {
+  let file = e.target.files[0];
+  if (!file) return;
+
+  let reader = new FileReader();
+  reader.onload = function(event) {
+    let img = new Image();
+    img.onload = function() {
+      bgImage = img;
+      draw(); // redraw canvas with background
+    }
+    img.src = event.target.result;
+  }
+  reader.readAsDataURL(file);
+});
+
+function draw() {
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+
+  // draw background image if exists
+  if (bgImage) {
+    ctx.drawImage(bgImage, 0, 0, canvas.width, canvas.height);
+  } else {
+    ctx.fillStyle = "#f2f2f2";
+    ctx.fillRect(0,0,canvas.width,canvas.height);
+  }
+
+  // draw texts
+  texts.forEach(t => {
+    ctx.fillStyle = t.color;
+    ctx.font = t.size + "px Arial";
+    ctx.fillText(t.text, t.x, t.y);
+  });
+}
+    window.onload = () => {
+      canvas = document.getElementById("canvas");
+      ctx = canvas.getContext("2d");
+      drawBg();
+    };
+
+    function drawBg() {
+      ctx.fillStyle = "#f2f2f2";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    function setPoster() {
+      canvas.width = 600;
+      canvas.height = 800;
+      drawBg();
+    }
+
+    function setThumbnail() {
+      canvas.width = 1280;
+      canvas.height = 720;
+      drawBg();
+    }
+
+    function setCustom() {
+      let w = prompt("Width?");
+      let h = prompt("Height?");
+      if (w && h) {
+        canvas.width = w;
+        canvas.height = h;
+        drawBg();
+      }
+    }
+  </script>
+
+</body>
+  </html>
