@@ -9,7 +9,7 @@
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f2f2f2;
+      background: #f2f2f2;h
       text-align: center;
       padding: 10px;
     }
@@ -66,7 +66,11 @@
 <button onclick="saveImage()">Download</button>
 
 <br><br>
-
+<div style="margin:10px 0;">
+  <button onclick="setPoster()">Poster</button>
+  <button onclick="setThumbnail()">Thumbnail</button>
+  <button onclick="setCustom()">Custom</button>
+</div>
 <canvas id="canvas" width="300" height="400"></canvas>
 
 <script>
@@ -146,6 +150,35 @@
     win.document.write("<img src='" + dataURL + "' style='width:100%'>");
   }
 </script>
+<script>
+  const canvas = document.getElementById("canvas");
 
+  function setPoster() {
+    canvas.width = 600;
+    canvas.height = 800;
+    clearCanvas();
+  }
+
+  function setThumbnail() {
+    canvas.width = 1280;
+    canvas.height = 720;
+    clearCanvas();
+  }
+
+  function setCustom() {
+    let w = prompt("Width?");
+    let h = prompt("Height?");
+    if (w && h) {
+      canvas.width = w;
+      canvas.height = h;
+      clearCanvas();
+    }
+  }
+
+  function clearCanvas() {
+    const ctx = canvas.getContext("2d");
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+  }
+</script>
 </body>
 </html>
